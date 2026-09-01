@@ -1118,6 +1118,88 @@ rewriter = rewriter.on(
         );
       }
 
+/*
+ * ROBOTS.TXT
+ */
+
+if (evidence.robotsTxt.accessible) {
+  addFinding(
+    findings,
+    "search_readiness",
+    "robots_txt_accessible",
+    "pass",
+    "robots.txt is accessible",
+    `The site returned HTTP ${evidence.robotsTxt.status} for robots.txt.`,
+    {
+      url: evidence.robotsTxt.url,
+      status: evidence.robotsTxt.status
+    }
+  );
+} else {
+  addFinding(
+    findings,
+    "search_readiness",
+    "robots_txt_unavailable",
+    "warning",
+    "robots.txt was not accessible",
+    "The standard robots.txt location could not be successfully retrieved.",
+    {
+      url: evidence.robotsTxt.url,
+      status: evidence.robotsTxt.status
+    }
+  );
+}
+
+/*
+ * SITEMAP
+ */
+
+if (evidence.sitemap.accessible) {
+  addFinding(
+    findings,
+    "search_readiness",
+    "sitemap_accessible",
+    "pass",
+    "XML sitemap is accessible",
+    `The site returned HTTP ${evidence.sitemap.probedStatus} for sitemap.xml.`,
+    {
+      url: evidence.sitemap.probedUrl,
+      status: evidence.sitemap.probedStatus
+    }
+  );
+
+  if (
+    evidence.sitemap.declaredInRobots.length === 0
+  ) {
+    addFinding(
+      findings,
+      "search_readiness",
+      "sitemap_not_declared_in_robots",
+      "warning",
+      "Sitemap is not declared in robots.txt",
+      "A sitemap.xml file was found, but robots.txt does not contain a Sitemap directive.",
+      {
+        sitemapUrl:
+          evidence.sitemap.probedUrl
+      }
+    );
+  }
+} else {
+  addFinding(
+    findings,
+    "search_readiness",
+    "sitemap_unavailable",
+    "warning",
+    "XML sitemap was not detected",
+    "The standard /sitemap.xml location could not be successfully retrieved.",
+    {
+      url: evidence.sitemap.probedUrl,
+      status:
+        evidence.sitemap.probedStatus
+    }
+  );
+}
+      
       /*
        * LANGUAGE
        */
