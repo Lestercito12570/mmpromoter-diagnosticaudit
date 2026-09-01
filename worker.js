@@ -230,7 +230,7 @@ export default {
         h6: ""
       };
 
-      let currentJsonLd = "";
+      let currentJsonLd = null;
 
       const jsonLdBlocks = [];
 
@@ -598,31 +598,47 @@ export default {
       });
 
       /*
-       * JSON-LD
+ * JSON-LD
+ *
+ * Capture the complete contents of each JSON-LD
+ * script block. Do not rely on lastInTextNode,
+ * because Cloudflare may deliver script contents
+ * in multiple text chunks.
+ */
+
+rewriter = rewriter.on(
+  'script[type="application/ld+json" i]',
+  {
+    element(element) {
+      evidence.structuredData.blockCount += 1;
+
+      let jsonText = "";
+
+      element.onEndTag(() => {
+        jsonLdBlocks.push(jsonText.trim());
+      });
+
+      /*
+       * Store the collector for this script element.
        */
-
-      rewriter = rewriter.on(
-        'script[type="application/ld+json" i]',
-        {
-          element() {
-            evidence.structuredData
-              .blockCount += 1;
-
-            currentJsonLd = "";
-          },
-
-          text(text) {
-            currentJsonLd += text.text;
-
-            if (text.lastInTextNode) {
-              jsonLdBlocks.push(
-                currentJsonLd.trim()
-              );
-            }
-          }
+      currentJsonLd = {
+        append(value) {
+          jsonText += value;
         }
-      );
+      };
+    },
 
+    text(text) {
+      if (
+        currentJsonLd &&
+        typeof currentJsonLd.append === "function"
+      ) {
+        currentJsonLd.append(text.text);
+      }
+    }
+  }
+);
+      
       /*
        * Approximate visible textual content.
        * Deliberately restrict this to content
