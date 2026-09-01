@@ -107,7 +107,7 @@ export default {
           corsHeaders
         );
       }
-
+      
       if (
         !contentType
           .toLowerCase()
@@ -126,29 +126,115 @@ export default {
       }
 /*
  * --------------------------------------------------
- * TEMPORARY RAW HTML DIAGNOSTICS
+ * ROBOTS.TXT + SITEMAP OBSERVATION
  * --------------------------------------------------
  */
 
-const debugResponse = response.clone();
-const rawHtml = await debugResponse.text();
+const resolvedPageUrl = new URL(response.url);
+const siteOrigin = resolvedPageUrl.origin;
 
-const rawHtmlSignals = {
-  hasJsonLd:
-    rawHtml.includes("application/ld+json"),
-
-  hasOgTitle:
-    rawHtml.includes('property="og:title"'),
-
-  hasOgDescription:
-    rawHtml.includes('property="og:description"'),
-
-  hasOgImage:
-    rawHtml.includes('property="og:image"'),
-
-  htmlLength:
-    rawHtml.length
+const robotsEvidence = {
+  url: `${siteOrigin}/robots.txt`,
+  status: null,
+  accessible: false,
+  contentType: "",
+  sitemapUrls: []
 };
+
+const sitemapEvidence = {
+  declaredInRobots: [],
+  probedUrl: `${siteOrigin}/sitemap.xml`,
+  probedStatus: null,
+  accessible: false,
+  contentType: ""
+};
+
+try {
+  const robotsResponse = await fetch(
+    robotsEvidence.url,
+    {
+      method: "GET",
+      redirect: "follow",
+      headers: {
+        Accept: "text/plain,*/*",
+        "User-Agent":
+          "Mozilla/5.0 (compatible; MM-Promoter-Diagnostic/1.0; +https://mmpromoter.com)"
+      }
+    }
+  );
+
+  robotsEvidence.status =
+    robotsResponse.status;
+
+  robotsEvidence.contentType =
+    robotsResponse.headers.get(
+      "content-type"
+    ) || "";
+
+  if (robotsResponse.ok) {
+    robotsEvidence.accessible = true;
+
+    const robotsText =
+      await robotsResponse.text();
+
+    const sitemapMatches =
+      robotsText.match(
+        /^\s*Sitemap:\s*(.+)$/gim
+      ) || [];
+
+    robotsEvidence.sitemapUrls =
+      sitemapMatches
+        .map(line =>
+          line
+            .replace(
+              /^\s*Sitemap:\s*/i,
+              ""
+            )
+            .trim()
+        )
+        .filter(Boolean);
+
+    sitemapEvidence.declaredInRobots =
+      [...robotsEvidence.sitemapUrls];
+  }
+} catch {
+  /*
+   * Leave robots evidence in its
+   * observed unavailable state.
+   */
+}
+
+try {
+  const sitemapResponse = await fetch(
+    sitemapEvidence.probedUrl,
+    {
+      method: "GET",
+      redirect: "follow",
+      headers: {
+        Accept:
+          "application/xml,text/xml,*/*",
+        "User-Agent":
+          "Mozilla/5.0 (compatible; MM-Promoter-Diagnostic/1.0; +https://mmpromoter.com)"
+      }
+    }
+  );
+
+  sitemapEvidence.probedStatus =
+    sitemapResponse.status;
+
+  sitemapEvidence.contentType =
+    sitemapResponse.headers.get(
+      "content-type"
+    ) || "";
+
+  sitemapEvidence.accessible =
+    sitemapResponse.ok;
+} catch {
+  /*
+   * Leave sitemap evidence in its
+   * observed unavailable state.
+   */
+}
       /*
        * --------------------------------------------------
        * RAW OBSERVED EVIDENCE
@@ -165,6 +251,10 @@ const rawHtmlSignals = {
             ? Number(contentLength)
             : null,
 
+robotsTxt: robotsEvidence,
+
+sitemap: sitemapEvidence,
+        
         html: {
           lang: "",
           viewport: "",
@@ -1372,8 +1462,6 @@ rewriter = rewriter.on(
       return jsonResponse(
         {
           status: "Success",
-          
-rawHtmlSignals,
           
           scan: {
             requestedUrl:
