@@ -94,6 +94,9 @@ export default {
       const contentLength =
         response.headers.get("content-length");
 
+      const xRobotsTag =
+  response.headers.get("x-robots-tag") || "";
+      
       if (!response.ok) {
         return jsonResponse(
           {
@@ -246,6 +249,7 @@ try {
         resolvedUrl: response.url,
         httpStatus: response.status,
         contentType,
+        xRobotsTag,
         declaredContentLength:
           contentLength
             ? Number(contentLength)
@@ -1163,19 +1167,27 @@ if (evidence.html.canonicalCount === 1) {
           .join(",")
           .toLowerCase();
 
-      if (
-        robotString.includes("noindex")
-      ) {
-        addFinding(
+      const xRobotsString =
+  evidence.xRobotsTag
+    .toLowerCase();
+      
+ if (
+  robotString.includes("noindex") ||
+  xRobotsString.includes("noindex")
+) {
+   addFinding(
           findings,
           "search_readiness",
           "robots_noindex",
           "issue",
           "Page instructs search engines not to index it",
-          evidence.html.robotsDirectives.join(
-            " | "
-          )
-        );
+          [
+  ...evidence.html.robotsDirectives,
+  evidence.xRobotsTag
+]
+  .filter(Boolean)
+  .join(" | ")  
+   );
       } else {
         addFinding(
           findings,
