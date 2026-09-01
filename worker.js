@@ -1080,6 +1080,80 @@ rewriter = rewriter.on(
         );
       }
 
+/*
+ * CANONICAL ALIGNMENT
+ */
+
+if (evidence.html.canonicalCount === 1) {
+  try {
+    const observedCanonical =
+      new URL(
+        evidence.html.canonicals[0],
+        evidence.resolvedUrl
+      );
+
+    const resolvedPage =
+      new URL(evidence.resolvedUrl);
+
+    const normalizedCanonical =
+      normalizeUrlForComparison(
+        observedCanonical
+      );
+
+    const normalizedResolved =
+      normalizeUrlForComparison(
+        resolvedPage
+      );
+
+    if (
+      normalizedCanonical ===
+      normalizedResolved
+    ) {
+      addFinding(
+        findings,
+        "search_readiness",
+        "canonical_aligned",
+        "pass",
+        "Canonical URL matches the resolved page",
+        "The declared canonical points to the page that was actually retrieved.",
+        {
+          canonical:
+            normalizedCanonical,
+          resolvedUrl:
+            normalizedResolved
+        }
+      );
+    } else {
+      addFinding(
+        findings,
+        "search_readiness",
+        "canonical_mismatch",
+        "warning",
+        "Canonical URL differs from the resolved page",
+        "The page declares a canonical URL that differs from the URL ultimately retrieved.",
+        {
+          canonical:
+            normalizedCanonical,
+          resolvedUrl:
+            normalizedResolved
+        }
+      );
+    }
+  } catch {
+    addFinding(
+      findings,
+      "search_readiness",
+      "canonical_invalid",
+      "issue",
+      "Canonical URL is malformed",
+      "The detected canonical value could not be interpreted as a valid URL.",
+      {
+        observed:
+          evidence.html.canonicals[0]
+      }
+    );
+  }
+}      
       /*
        * ROBOTS / INDEXABILITY
        */
