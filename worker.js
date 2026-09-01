@@ -494,6 +494,28 @@ sitemap: sitemapEvidence,
         }
       );
 
+/*
+ * FAVICON
+ */
+
+rewriter = rewriter.on(
+  'link[rel~="icon"]',
+  {
+    element(element) {
+      const href =
+        element.getAttribute("href");
+
+      if (
+        href &&
+        !evidence.html.favicon
+      ) {
+        evidence.html.favicon =
+          href.trim();
+      }
+    }
+  }
+);
+      
       /*
        * HEADINGS
        */
@@ -1322,6 +1344,24 @@ if (evidence.sitemap.accessible) {
           "No viewport meta tag was detected."
       );
 
+/*
+ * FAVICON
+ */
+
+addFinding(
+  findings,
+  "site_health",
+  "favicon",
+  evidence.html.favicon
+    ? "pass"
+    : "warning",
+  evidence.html.favicon
+    ? "Favicon detected"
+    : "Favicon not detected",
+  evidence.html.favicon ||
+    "No favicon link was detected in the page HTML."
+);
+      
       /*
        * H1
        */
