@@ -124,7 +124,31 @@ export default {
           corsHeaders
         );
       }
+/*
+ * --------------------------------------------------
+ * TEMPORARY RAW HTML DIAGNOSTICS
+ * --------------------------------------------------
+ */
 
+const debugResponse = response.clone();
+const rawHtml = await debugResponse.text();
+
+const rawHtmlSignals = {
+  hasJsonLd:
+    rawHtml.includes("application/ld+json"),
+
+  hasOgTitle:
+    rawHtml.includes('property="og:title"'),
+
+  hasOgDescription:
+    rawHtml.includes('property="og:description"'),
+
+  hasOgImage:
+    rawHtml.includes('property="og:image"'),
+
+  htmlLength:
+    rawHtml.length
+};
       /*
        * --------------------------------------------------
        * RAW OBSERVED EVIDENCE
@@ -1348,7 +1372,9 @@ rewriter = rewriter.on(
       return jsonResponse(
         {
           status: "Success",
-
+          
+rawHtmlSignals,
+          
           scan: {
             requestedUrl:
               evidence.requestedUrl,
