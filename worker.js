@@ -1618,6 +1618,8 @@ if (evidence.sitemap.accessible) {
       return jsonResponse(
         {
           status: "Success",
+
+engineVersion: "1.0.1-canonical",
           
           scan: {
             requestedUrl:
