@@ -263,6 +263,7 @@ sitemap: sitemapEvidence,
           lang: "",
           viewport: "",
           favicon: "",
+          hreflang: [],
           titleCount: 0,
           title: "",
           titleLength: 0,
@@ -516,7 +517,30 @@ rewriter = rewriter.on(
     }
   }
 );
-      
+
+/*
+ * HREFLANG
+ */
+
+rewriter = rewriter.on(
+  'link[hreflang]',
+  {
+    element(element) {
+      const hreflang =
+        element.getAttribute("hreflang");
+
+      const href =
+        element.getAttribute("href");
+
+      if (hreflang) {
+        evidence.html.hreflang.push({
+          hreflang: hreflang.trim(),
+          href: href ? href.trim() : ""
+        });
+      }
+    }
+  }
+);      
       /*
        * HEADINGS
        */
@@ -1362,6 +1386,24 @@ addFinding(
   evidence.html.favicon ||
     "No favicon link was detected in the page HTML."
 );
+
+/*
+ * HREFLANG
+ */
+
+if (evidence.html.hreflang.length > 0) {
+  addFinding(
+    findings,
+    "search_readiness",
+    "hreflang_present",
+    "pass",
+    "Hreflang declarations detected",
+    `${evidence.html.hreflang.length} hreflang declaration(s) were found.`,
+    {
+      observed: evidence.html.hreflang
+    }
+  );
+}
       
       /*
        * H1
