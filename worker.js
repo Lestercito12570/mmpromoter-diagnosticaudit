@@ -317,6 +317,7 @@ sitemap: sitemapEvidence,
           mailto: 0,
           tel: 0,
           javascript: 0,
+          malformed: 0,
           uniqueInternal: 0,
           uniqueExternal: 0
         },
@@ -753,12 +754,9 @@ rewriter = rewriter.on(
                 )
               );
             }
-          } catch {
-            /*
-             * Malformed links are simply not
-             * classified here.
-             */
-          }
+         } catch {
+  evidence.links.malformed += 1;
+}
         }
       });
 
@@ -1446,6 +1444,25 @@ if (evidence.html.hreflang.length > 0) {
         );
       }
 
+
+      /*
+       * MALFORMED LINKS
+       */
+
+      if (evidence.links.malformed > 0) {
+        addFinding(
+          findings,
+          "site_health",
+          "malformed_links",
+          "warning",
+          "Malformed links detected",
+          `${evidence.links.malformed} link(s) could not be interpreted as valid URLs.`,
+          {
+            observed: evidence.links.malformed
+          }
+        );
+      }
+      
       /*
        * DUPLICATE HEADINGS
        */
