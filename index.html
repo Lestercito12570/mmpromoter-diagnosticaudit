@@ -1,1 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Free Website Diagnostic | MM-Promoter</title>
+
+    <meta
+        name="description"
+        content="Run a free evidence-based website diagnostic from MM-Promoter. Check metadata, page structure, indexing signals, and structured data."
+    >
+
+    <style>
+        :root {
+            --bg: #081827;
+            --panel: #102437;
+            --panel-light: #153047;
+            --border: #28455f;
+            --text: #ffffff;
+            --muted: #9fb1c3;
+            --accent: #00d4ff;
+            --success: #5ee6a8;
+            --warning: #ffd166;
+            --danger: #ff7b7b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 22px 28px;
+        }
+
+        .header-inner {
+            max-width: 1050px;
+            margin: 0 auto;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .brand span {
+            color: var(--accent);
+        }
+
+        .launch-link {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .launch-link:hover {
+            color: var(--text);
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 75px 24px 100px;
+        }
+
+        .intro {
+            text-align: center;
+            max-width: 720px;
+            margin: 0 auto 45px;
+        }
+
+        .eyebrow {
+            color: var(--accent);
+            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-size: clamp(38px, 6vw, 60px);
+            line-height: 1.05;
+            margin: 0 0 20px;
+            letter-spacing: -2px;
+        }
+
+        .intro p {
+            color: var(--muted);
+            font-size: 18px;
+            margin: 0 auto;
+            max-width: 650px;
+        }
+
+        .audit-panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 30px;
+        }
+
+        .audit-panel label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 9px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        input {
+            flex: 1;
+
+            padding: 15px 16px;
+
+            background: #091a2a;
+            color: var(--text);
+
+            border: 1px solid var(--border);
+            border-radius: 9px;
+
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        button {
+            border: 0;
+            border-radius: 9px;
+
+            background: var(--accent);
+            color: #04121d;
+
+            padding: 15px 22px;
+
+            font-size: 15px;
+            font-weight: 700;
+
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            opacity: 0.55;
+            cursor: wait;
+        }
+
+        .privacy-note {
+            color: var(--muted);
+            font-size: 12px;
+            margin: 12px 0 0;
+        }
+
+        #status {
+            display: none;
+
+            margin-top: 20px;
+            padding: 14px 16px;
+
+            border-radius: 8px;
+
+            background: var(--panel-light);
+            color: var(--muted);
+
+            font-size: 14px;
+        }
+
+        #results {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .results-header {
+            margin-bottom: 20px;
+        }
+
+        .results-header h2 {
+            margin: 0 0 5px;
+            font-size: 26px;
+        }
+
+        .results-header p {
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .evidence-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 14px;
+        }
+
+        .evidence-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .evidence-label {
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 7px;
+        }
+
+        .evidence-value {
+            font-size: 16px;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .placeholder {
+            color: var(--muted);
+        }
+
+        .cta {
+            display: none;
+
+            margin-top: 35px;
+            padding: 28px;
+
+            text-align: center;
+
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .cta h3 {
+            margin: 0 0 8px;
+            font-size: 23px;
+        }
+
+        .cta p {
+            color: var(--muted);
+            margin: 0 0 20px;
+        }
+
+        .cta a {
+            display: inline-block;
+
+            background: var(--accent);
+            color: #04121d;
+
+            text-decoration: none;
+            font-weight: 700;
+
+            padding: 13px 20px;
+            border-radius: 8px;
+        }
+
+        footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            padding: 30px 20px;
+        }
+
+        @media (max-width: 700px) {
+            main {
+                padding-top: 50px;
+            }
+
+            .input-row {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .evidence-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-inner {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+
+        <div class="brand">
+            MM<span>-Promoter</span>
+        </div>
+
+        <a
+            class="launch-link"
+            href="https://app.mmpromoter.com"
+        >
+            Launch MM-Promoter →
+        </a>
+
+    </div>
+</header>
+
+
+<main>
+
+    <section class="intro">
+
+        <div class="eyebrow">
+            Free Website Diagnostic
+        </div>
+
+        <h1>
+            See what MM-Promoter sees.
+        </h1>
+
+        <p>
+            Get an evidence-based look at how your website
+            is structured for search and AI discovery.
+            No MM-Promoter account required.
+        </p>
+
+    </section>
+
+
+    <section class="audit-panel">
+
+        <form id="audit-form">
+
+            <label for="website-url">
+                Website URL
+            </label>
+
+            <div class="input-row">
+
+                <input
+                    id="website-url"
+                    type="url"
+                    placeholder="https://example.com"
+                    required
+                >
+
+                <button
+                    id="audit-button"
+                    type="submit"
+                >
+                    Run Free Diagnostic
+                </button>
+
+            </div>
+
+            <p class="privacy-note">
+                MM-Promoter analyzes publicly available
+                website information only.
+            </p>
+
+        </form>
+
+        <div id="status"></div>
+
+    </section>
+
+
+    <section id="results">
+
+        <div class="results-header">
+            <h2>Observed Website Evidence</h2>
+
+            <p>
+                These results come from information
+                retrieved directly from the website.
+            </p>
+        </div>
+
+
+        <div class="evidence-grid">
+
+            <div class="evidence-card">
+                <div class="evidence-label">
+                    HTTP Status
+                </div>
+
+                <div
+                    id="result-http"
+                    class="evidence-value placeholder"
+                >
+                    —
+                </div>
+            </div>
+
+
+            <div class="evidence-card">
+                <div class="evidence-label">
+                    Resolved URL
+                </div>
+
+                <div
+                    id="result-url"
+                    class="evidence-value placeholder"
+                >
+                    —
+                </div>
+            </div>
+
+
+            <div class="evidence-card">
+                <div class="evidence-label">
+                    Page Title
+                </div>
+
+                <div
+                    id="result-title"
+                    class="evidence-value placeholder"
+                >
+                    —
+                </div>
+            </div>
+
+
+            <div class="evidence-card">
+                <div class="evidence-label">
+                    Meta Description
+                </div>
+
+                <div
+                    id="result-description"
+                    class="evidence-value placeholder"
+                >
+                    —
+                </div>
+            </div>
+
+
+            <div class="evidence-card">
+                <div class="evidence-label">
+                    Canonical URL
+                </div>
+
+                <div
+                    id="result-canonical"
+                    class="evidence-value placeholder"
+                >
+                    —
+                </div>
+            </div>
+
+
+            <div class="evidence-card">
+                <div class="evidence-label">
+                    H1 Elements
+                </div>
+
+                <div
+                    id="result-h1"
+                    class="evidence-value placeholder"
+                >
+                    —
+                </div>
+            </div>
+
+
+            <div class="evidence-card">
+                <div class="evidence-label">
+                    JSON-LD Blocks
+                </div>
+
+                <div
+                    id="result-jsonld"
+                    class="evidence-value placeholder"
+                >
+                    —
+                </div>
+            </div>
+
+
+            <div class="evidence-card">
+                <div class="evidence-label">
+                    Schema Types
+                </div>
+
+                <div
+                    id="result-schema"
+                    class="evidence-value placeholder"
+                >
+                    —
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section
+        id="cta"
+        class="cta"
+    >
+
+        <h3>
+            Turn evidence into action.
+        </h3>
+
+        <p>
+            MM-Promoter helps you understand what to
+            improve, what to prioritize, and what to do next.
+        </p>
+
+        <a href="https://app.mmpromoter.com">
+            Launch MM-Promoter
+        </a>
+
+    </section>
+
+</main>
+
+
+<footer>
+    © 2026 MM-Promoter · A Lesters Apps product
+</footer>
+
+
+<script>
+
+    /*
+     * Worker endpoint will go here after
+     * we deploy and verify the scanner.
+     */
+
+    const DIAGNOSTIC_API = '';
+
+
+    const form =
+        document.getElementById('audit-form');
+
+    const button =
+        document.getElementById('audit-button');
+
+    const status =
+        document.getElementById('status');
+
+    const results =
+        document.getElementById('results');
+
+    const cta =
+        document.getElementById('cta');
+
+
+    form.addEventListener(
+        'submit',
+        async function(event) {
+
+            event.preventDefault();
+
+            const target =
+                document
+                    .getElementById('website-url')
+                    .value
+                    .trim();
+
+
+            /*
+             * Until the Worker exists, deliberately
+             * stop here rather than manufacture results.
+             */
+
+            if (!DIAGNOSTIC_API) {
+
+                status.style.display = 'block';
+
+                status.textContent =
+                    'Diagnostic engine is not connected yet.';
+
+                return;
+            }
+
+
+            button.disabled = true;
+
+            status.style.display = 'block';
+
+            status.textContent =
+                'Retrieving website evidence...';
+
+            results.style.display = 'none';
+
+            cta.style.display = 'none';
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        DIAGNOSTIC_API,
+                        {
+                            method: 'POST',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json'
+                            },
+
+                            body: JSON.stringify({
+                                target
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        'Diagnostic request failed.'
+                    );
+                }
+
+
+                /*
+                 * Only display values actually
+                 * returned by the scanner.
+                 */
+
+                document.getElementById(
+                    'result-http'
+                ).textContent =
+                    data.httpStatus ?? 'Not observed';
+
+
+                document.getElementById(
+                    'result-url'
+                ).textContent =
+                    data.resolvedUrl ?? 'Not observed';
+
+
+                document.getElementById(
+                    'result-title'
+                ).textContent =
+                    data.title || 'Not detected';
+
+
+                document.getElementById(
+                    'result-description'
+                ).textContent =
+                    data.metaDescription ||
+                    'Not detected';
+
+
+                document.getElementById(
+                    'result-canonical'
+                ).textContent =
+                    data.canonical ||
+                    'Not detected';
+
+
+                document.getElementById(
+                    'result-h1'
+                ).textContent =
+                    data.h1Count ?? 'Not observed';
+
+
+                document.getElementById(
+                    'result-jsonld'
+                ).textContent =
+                    data.jsonLdBlockCount ??
+                    'Not observed';
+
+
+                document.getElementById(
+                    'result-schema'
+                ).textContent =
+                    Array.isArray(data.schemaTypes) &&
+                    data.schemaTypes.length
+
+                        ? data.schemaTypes.join(', ')
+
+                        : 'None detected';
+
+
+                status.textContent =
+                    'Website evidence retrieved successfully.';
+
+                results.style.display = 'block';
+
+                cta.style.display = 'block';
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                status.textContent =
+                    `Diagnostic failed: ${error.message}`;
+
+            } finally {
+
+                button.disabled = false;
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
