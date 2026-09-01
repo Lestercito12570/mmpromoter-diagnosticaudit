@@ -292,7 +292,7 @@ export default {
        */
 
       rewriter = rewriter.on(
-        'meta[name="description" i]',
+        'meta[name="description"]',
         {
           element(element) {
             evidence.html.metaDescriptionCount +=
@@ -315,7 +315,7 @@ export default {
        */
 
       rewriter = rewriter.on(
-        'meta[name="viewport" i]',
+        'meta[name="viewport"]',
         {
           element(element) {
             const content =
@@ -337,7 +337,7 @@ export default {
        */
 
       rewriter = rewriter.on(
-        'meta[name="robots" i]',
+        'meta[name="robots"]',
         {
           element(element) {
             evidence.html.robotsMetaCount += 1;
@@ -359,7 +359,7 @@ export default {
        */
 
       rewriter = rewriter.on(
-        'link[rel~="canonical" i]',
+        'link[rel~="canonical"]',
         {
           element(element) {
             evidence.html.canonicalCount += 1;
@@ -432,7 +432,7 @@ export default {
         key
       ] of Object.entries(ogMap)) {
         rewriter = rewriter.on(
-          `meta[property="${property}" i]`,
+          `meta[property="${property}"]`,
           {
             element(element) {
               const content =
@@ -465,7 +465,7 @@ export default {
         key
       ] of Object.entries(twitterMap)) {
         rewriter = rewriter.on(
-          `meta[name="${name}" i]`,
+          `meta[name="${name}"]`,
           {
             element(element) {
               const content =
@@ -607,7 +607,7 @@ export default {
  */
 
 rewriter = rewriter.on(
-  'script[type="application/ld+json" i]',
+  'script[type="application/ld+json"]',
   {
     element(element) {
       evidence.structuredData.blockCount += 1;
