@@ -262,6 +262,7 @@ sitemap: sitemapEvidence,
         html: {
           lang: "",
           viewport: "",
+          favicon: "",
           titleCount: 0,
           title: "",
           titleLength: 0,
