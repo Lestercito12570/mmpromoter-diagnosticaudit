@@ -1316,7 +1316,23 @@ if (evidence.robotsTxt.accessible) {
  * SITEMAP
  */
 
-if (evidence.sitemap.accessible) {
+if (
+  evidence.robotsTxt.accessible &&
+  evidence.sitemap.declaredInRobots.length > 0
+) {
+  addFinding(
+    findings,
+    "search_readiness",
+    "sitemap_declared",
+    "pass",
+    "Sitemap declarations detected",
+    `${evidence.sitemap.declaredInRobots.length} sitemap URL(s) were declared in robots.txt.`,
+    {
+      declaredUrls:
+        evidence.sitemap.declaredInRobots
+    }
+  );
+} else if (evidence.sitemap.accessible) {
   addFinding(
     findings,
     "search_readiness",
@@ -1330,10 +1346,7 @@ if (evidence.sitemap.accessible) {
     }
   );
 
-  if (
-      evidence.robotsTxt.accessible &&
-    evidence.sitemap.declaredInRobots.length === 0
-  ) {
+  if (evidence.robotsTxt.accessible) {
     addFinding(
       findings,
       "search_readiness",
@@ -1354,7 +1367,7 @@ if (evidence.sitemap.accessible) {
     "sitemap_unavailable",
     "warning",
     "XML sitemap was not detected",
-    "The standard /sitemap.xml location could not be successfully retrieved.",
+    "No sitemap declaration was found in robots.txt, and the standard /sitemap.xml location could not be successfully retrieved.",
     {
       url: evidence.sitemap.probedUrl,
       status:
