@@ -2357,6 +2357,23 @@ if (jsonLdCount > 0) {
 
   score.dimensions.contentExperienceQuality.score =
     contentExperienceScore;  
+
+  /*
+   * --------------------------------------------------
+   * OVERALL WEBSITE VISIBILITY HEALTH SCORE
+   * --------------------------------------------------
+   */
+
+  const rawOverallScore =
+    score.dimensions.technicalAccessibility.score +
+    score.dimensions.searchPageClarity.score +
+    score.dimensions.businessEntityUnderstanding.score +
+    score.dimensions.discoverySharingSignals.score +
+    score.dimensions.contentExperienceQuality.score;
+
+  score.overall.score =
+    Math.round(rawOverallScore * 10) / 10;
+  
   return score;
 }
 
