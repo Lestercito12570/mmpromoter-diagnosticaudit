@@ -1134,32 +1134,43 @@ addFinding(
           "Canonical URL is missing",
           "No canonical link was detected."
         );
-      } else if (
-        evidence.html.canonicalCount > 1
-      ) {
-        addFinding(
-          findings,
-          "search_readiness",
-          "canonical_multiple",
-          "issue",
-          "Multiple canonical URLs detected",
-          `${evidence.html.canonicalCount} canonical link elements were found.`,
-          {
-            observed:
-              evidence.html.canonicals
-          }
-        );
-      } else {
-        addFinding(
-          findings,
-          "search_readiness",
-          "canonical_present",
-          "pass",
-          "Canonical URL detected",
-          evidence.html.canonicals[0]
-        );
-      }
+        
+     } else if (
+  evidence.html.canonicalCount > 1
+) {
+  const uniqueCanonicals = [
+    ...new Set(
+      evidence.html.canonicals.map(
+        value => value.trim()
+      )
+    )
+  ];
 
+  const canonicalsConflict =
+    uniqueCanonicals.length > 1;
+
+  addFinding(
+    findings,
+    "search_readiness",
+    canonicalsConflict
+      ? "canonical_conflicting"
+      : "canonical_duplicate",
+    canonicalsConflict
+      ? "issue"
+      : "warning",
+    canonicalsConflict
+      ? "Conflicting canonical URLs detected"
+      : "Duplicate canonical elements detected",
+    canonicalsConflict
+      ? `${evidence.html.canonicalCount} canonical elements point to ${uniqueCanonicals.length} different URLs.`
+      : `${evidence.html.canonicalCount} canonical elements were found, but they all point to the same URL.`,
+    {
+      observed:
+        evidence.html.canonicals
+    }
+  );
+}
+      
 /*
  * CANONICAL ALIGNMENT
  */
