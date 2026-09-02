@@ -2062,6 +2062,119 @@ function calculateVisibilityHealth(evidence, findings) {
 
   score.dimensions.technicalAccessibility.score = technicalScore;
 
+  /*
+   * --------------------------------------------------
+   * 2. SEARCH & PAGE CLARITY — 25 POINTS
+   * --------------------------------------------------
+   */
+
+  let searchClarityScore = 0;
+
+  // Page title — 7 points
+  const titles = evidence.html?.titles || [];
+  const titleCount = evidence.html?.titleCount || 0;
+  const primaryTitle = evidence.html?.title || "";
+  const primaryTitleLength = evidence.html?.titleLength || 0;
+
+  const uniqueTitles = [
+    ...new Set(
+      titles
+        .map(value => String(value).trim())
+        .filter(Boolean)
+    )
+  ];
+
+  if (titleCount === 1 && primaryTitle) {
+    if (primaryTitleLength >= 30 && primaryTitleLength <= 70) {
+      searchClarityScore += 7;
+    } else {
+      searchClarityScore += 5;
+    }
+  } else if (titleCount > 1) {
+    if (uniqueTitles.length === 1) {
+      searchClarityScore += 3;
+    } else {
+      searchClarityScore += 1;
+    }
+  }
+
+  // Meta description — 5 points
+  const metaDescriptions = evidence.html?.metaDescriptions || [];
+  const uniqueMetaDescriptions = [
+    ...new Set(
+      metaDescriptions
+        .map(value => String(value).trim())
+        .filter(Boolean)
+    )
+  ];
+
+  if (uniqueMetaDescriptions.length === 1) {
+    const descriptionLength = uniqueMetaDescriptions[0].length;
+
+    if (descriptionLength >= 70 && descriptionLength <= 160) {
+      searchClarityScore += 5;
+    } else {
+      searchClarityScore += 4;
+    }
+  } else if (uniqueMetaDescriptions.length > 1) {
+    searchClarityScore += 2;
+  }
+
+  // Canonical clarity — 5 points
+  const canonicals = evidence.html?.canonicals || [];
+  const uniqueCanonicals = [
+    ...new Set(
+      canonicals
+        .map(value => String(value).trim())
+        .filter(Boolean)
+    )
+  ];
+
+  if (canonicals.length === 1) {
+    try {
+      const canonicalUrl = new URL(
+        canonicals[0],
+        evidence.resolvedUrl
+      );
+
+      const canonicalNormalized =
+        normalizeUrlForComparison(canonicalUrl.href);
+
+      const resolvedNormalized =
+        normalizeUrlForComparison(evidence.resolvedUrl);
+
+      if (canonicalNormalized === resolvedNormalized) {
+        searchClarityScore += 5;
+      } else {
+        searchClarityScore += 1;
+      }
+    } catch {
+      // malformed canonical = 0 points
+    }
+  } else if (canonicals.length > 1) {
+    if (uniqueCanonicals.length === 1) {
+      searchClarityScore += 4;
+    }
+    // conflicting canonicals = 0 points
+  } else {
+    searchClarityScore += 3;
+  }
+
+  // Primary H1 — 5 points
+  const h1Count = (evidence.headings?.h1 || []).length;
+
+  if (h1Count === 1) {
+    searchClarityScore += 5;
+  } else if (h1Count > 1) {
+    searchClarityScore += 3;
+  }
+
+  // Language declaration — 3 points
+  if (evidence.html?.lang) {
+    searchClarityScore += 3;
+  }
+
+  score.dimensions.searchPageClarity.score = searchClarityScore;  
   return score;
 }
 
