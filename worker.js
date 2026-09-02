@@ -1924,7 +1924,7 @@ console.log("VISIBILITY HEALTH:", visibilityHealth);
         {
           status: "Success",
 
-engineVersion: "1.0.1-canonical",
+engineVersion: "1.0.2-score",
           
           scan: {
             requestedUrl:
