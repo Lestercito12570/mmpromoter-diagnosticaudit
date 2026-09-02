@@ -2184,7 +2184,7 @@ function calculateVisibilityHealth(evidence, findings) {
 
   let entityUnderstandingScore = 0;
 
-  const schemaTypes = evidence.structuredData?.types || [];
+ const schemaTypes = evidence.structuredData?.schemaTypes || [];
   const normalizedSchemaTypes = schemaTypes.map(type =>
     String(type).toLowerCase()
   );
@@ -2208,24 +2208,81 @@ function calculateVisibilityHealth(evidence, findings) {
   }
 
   // Structured-data presence & validity — 5 points
-  const jsonLdCount =
-    evidence.structuredData?.jsonLdCount || 0;
+ const jsonLdCount =
+  evidence.structuredData?.blockCount || 0;
 
-  const jsonLdParseErrors =
-    evidence.structuredData?.parseErrors || 0;
+const validJsonLdCount =
+  evidence.structuredData?.validBlockCount || 0;
 
-  if (jsonLdCount > 0) {
-    if (jsonLdParseErrors === 0) {
-      entityUnderstandingScore += 5;
-    } else if (jsonLdParseErrors < jsonLdCount) {
-      entityUnderstandingScore += 3;
-    } else {
-      entityUnderstandingScore += 1;
-    }
+const invalidJsonLdCount =
+  evidence.structuredData?.invalidBlockCount || 0;
+
+if (jsonLdCount > 0) {
+  if (invalidJsonLdCount === 0) {
+    entityUnderstandingScore += 5;
+  } else if (validJsonLdCount > 0) {
+    entityUnderstandingScore += 3;
+  } else {
+    entityUnderstandingScore += 1;
   }
-
+}
+  
   score.dimensions.businessEntityUnderstanding.score =
     entityUnderstandingScore;  
+  
+  /*
+   * --------------------------------------------------
+   * 4. DISCOVERY & SHARING SIGNALS — 20 POINTS
+   * --------------------------------------------------
+   */
+
+  let discoverySharingScore = 0;
+
+  // Open Graph — 10 points
+  const og = evidence.openGraph || {};
+
+  if ((og.title || []).length > 0) {
+    discoverySharingScore += 3;
+  }
+
+  if ((og.description || []).length > 0) {
+    discoverySharingScore += 3;
+  }
+
+  if ((og.image || []).length > 0) {
+    discoverySharingScore += 4;
+  }
+
+  // Twitter/X Card — 6 points
+  const twitter = evidence.twitter || {};
+
+  if ((twitter.card || []).length > 0) {
+    discoverySharingScore += 2;
+  }
+
+  if ((twitter.title || []).length > 0) {
+    discoverySharingScore += 1.5;
+  }
+
+  if ((twitter.description || []).length > 0) {
+    discoverySharingScore += 1;
+  }
+
+  if ((twitter.image || []).length > 0) {
+    discoverySharingScore += 1.5;
+  }
+
+  // Image descriptive markup coverage — 4 points
+  const totalImages = evidence.images?.total || 0;
+  const imagesWithAlt = evidence.images?.withAlt || 0;
+
+  if (totalImages > 0) {
+    const altCoverage = imagesWithAlt / totalImages;
+    discoverySharingScore += altCoverage * 4;
+  }
+
+  score.dimensions.discoverySharingSignals.score =
+    Math.round(discoverySharingScore * 10) / 10;  
   return score;
 }
 
