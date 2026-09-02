@@ -2149,15 +2149,16 @@ function collectSchemaEvidence(
     }
   }
 
-  if (
-    typeof value["@id"] === "string" &&
+ if (
+  value["@type"] &&
+  typeof value["@id"] === "string" &&
+  value["@id"].trim()
+) {
+  schemaIds.push(
     value["@id"].trim()
-  ) {
-    schemaIds.push(
-      value["@id"].trim()
-    );
-  }
-
+  );
+}
+  
   for (
     const child of
       Object.values(value)
