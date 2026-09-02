@@ -90,6 +90,9 @@ export default {
         }
       });
 
+const responseTimeMs =
+  Date.now() - fetchStartedAt;
+      
       const contentType =
         response.headers.get("content-type") || "";
 
