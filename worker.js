@@ -2008,7 +2008,13 @@ function calculateVisibilityHealth(evidence, findings) {
       max: 100
     },
 
-    constraints: []
+   constraints: [],
+
+interpretation: {
+  headline: "",
+  summary: "",
+  priorities: []
+}
   };
 
   /*
@@ -2380,6 +2386,46 @@ const currentLevel =
 
   score.overall.score =
     Math.round(rawOverallScore * 10) / 10;
+
+  /*
+   * --------------------------------------------------
+   * CUSTOMER-FACING OVERALL INTERPRETATION
+   * --------------------------------------------------
+   */
+
+  const overallScore = score.overall.score;
+
+  if (overallScore >= 90) {
+    score.interpretation.headline =
+      "Excellent visibility foundation";
+
+    score.interpretation.summary =
+      "This website provides a very strong foundation for discovery and understanding across search engines, AI systems, social platforms, and visitors.";
+  } else if (overallScore >= 75) {
+    score.interpretation.headline =
+      "Strong visibility foundation";
+
+    score.interpretation.summary =
+      "This website has a strong visibility foundation, with a small number of opportunities to strengthen how it is discovered, understood, or represented across digital platforms.";
+  } else if (overallScore >= 60) {
+    score.interpretation.headline =
+      "Good foundation with important opportunities";
+
+    score.interpretation.summary =
+      "This website has a solid technical and structural foundation, but important visibility signals are missing or incomplete. Addressing the highest-impact gaps could substantially strengthen how the site is understood and represented.";
+  } else if (overallScore >= 40) {
+    score.interpretation.headline =
+      "Visibility needs improvement";
+
+    score.interpretation.summary =
+      "This website has several meaningful gaps that may make it harder for search engines, AI systems, social platforms, or visitors to consistently understand and represent it.";
+  } else {
+    score.interpretation.headline =
+      "Significant visibility gaps detected";
+
+    score.interpretation.summary =
+      "This website is missing several foundational signals that support reliable discovery and understanding. Addressing the most important gaps should be the first priority.";
+  }
   
   return score;
 }
