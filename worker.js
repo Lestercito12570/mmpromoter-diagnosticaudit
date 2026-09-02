@@ -2459,7 +2459,9 @@ const currentLevel =
   ) {
     score.interpretation.priorities.push({
       priority: 2,
-      area: "Discovery & Sharing Signals",
+     impact: 20 - score.dimensions.discoverySharingSignals.score,
+area: "Discovery & Sharing Signals",
+      
       title: "Improve how the website appears when discovered or shared",
       whatThisMeans:
         "The website is missing or has incomplete metadata that helps digital platforms understand how its pages should be represented when discovered or shared.",
