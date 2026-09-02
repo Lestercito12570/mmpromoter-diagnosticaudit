@@ -2384,8 +2384,19 @@ const currentLevel =
     score.dimensions.discoverySharingSignals.score +
     score.dimensions.contentExperienceQuality.score;
 
+  const calculatedOverallScore =
+  Math.round(rawOverallScore * 10) / 10;
+
+if (score.constraints.some(
+  constraint => constraint.code === "noindex"
+)) {
   score.overall.score =
-    Math.round(rawOverallScore * 10) / 10;
+    Math.min(calculatedOverallScore, 49);
+} else {
+  score.overall.score =
+    calculatedOverallScore;
+}
+  
 
   /*
    * --------------------------------------------------
