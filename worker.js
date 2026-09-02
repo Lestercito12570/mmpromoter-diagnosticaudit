@@ -291,6 +291,7 @@ sitemap: sitemapEvidence,
           h4: [],
           h5: [],
           h6: []
+          sequence: []
         },
 
         openGraph: {
@@ -580,6 +581,11 @@ rewriter = rewriter.on(
                   value
                 );
 
+ evidence.headings.sequence.push({
+    level,
+    text: value
+  });
+                
                 visibleTextParts.push(value);
               }
             }
@@ -1466,6 +1472,70 @@ if (evidence.html.hreflang.length > 0) {
         );
       }
 
+/*
+ * HEADING HIERARCHY
+ */
+
+const headingSequence =
+  evidence.headings.sequence;
+
+let skippedHeadingLevels = [];
+
+for (
+  let i = 1;
+  i < headingSequence.length;
+  i++
+) {
+  const previousLevel =
+    Number(
+      headingSequence[i - 1].level.slice(1)
+    );
+
+  const currentLevel =
+    Number(
+      headingSequence[i].level.slice(1)
+    );
+
+  if (
+    currentLevel >
+    previousLevel + 1
+  ) {
+    skippedHeadingLevels.push({
+      from:
+        headingSequence[i - 1],
+      to:
+        headingSequence[i]
+    });
+  }
+}
+
+if (
+  skippedHeadingLevels.length > 0
+) {
+  addFinding(
+    findings,
+    "page_structure",
+    "heading_levels_skipped",
+    "warning",
+    "Heading levels are skipped",
+    `${skippedHeadingLevels.length} skipped heading-level transition(s) were detected.`,
+    {
+      observed:
+        skippedHeadingLevels
+    }
+  );
+} else if (
+  headingSequence.length > 0
+) {
+  addFinding(
+    findings,
+    "page_structure",
+    "heading_hierarchy",
+    "pass",
+    "Heading hierarchy is sequential",
+    "No skipped heading levels were detected."
+  );
+}
 
       /*
        * MALFORMED LINKS
