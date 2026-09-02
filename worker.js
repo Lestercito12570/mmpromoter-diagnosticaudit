@@ -2476,6 +2476,27 @@ area: "Discovery & Sharing Signals",
     });
   }
 
+  if (
+    score.dimensions.contentExperienceQuality.score < 6
+  ) {
+    score.interpretation.priorities.push({
+      priority: 0,
+      impact: 10 - score.dimensions.contentExperienceQuality.score,
+      area: "Content & Experience Quality",
+      title: "Improve the website's content structure",
+      whatThisMeans:
+        "The page has structural issues in its heading organization that can make the content hierarchy less clear to visitors and systems interpreting the page.",
+      recommendedAction:
+        "Review the page heading structure, remove unnecessary or empty headings, and use heading levels in a clear logical hierarchy.",
+      scoreImpact: {
+        current:
+          score.dimensions.contentExperienceQuality.score,
+        max:
+          score.dimensions.contentExperienceQuality.max
+      }
+    });
+  }
+  
   score.interpretation.priorities.sort(
     (a, b) => b.impact - a.impact
   );
