@@ -1909,6 +1909,11 @@ twitterComplete
           findings.length
       };
 
+const visibilityHealth =
+  calculateVisibilityHealth(evidence, findings);
+
+console.log("VISIBILITY HEALTH:", visibilityHealth);
+      
       /*
        * --------------------------------------------------
        * FINAL RESPONSE
