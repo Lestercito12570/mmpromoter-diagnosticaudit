@@ -1710,6 +1710,9 @@ if (evidence.headings.empty > 0) {
         ) ||
         schemaTypesLower.includes(
           "localbusiness"
+  ) ||
+  schemaTypesLower.includes(
+    "newsmediaorganization"
         );
 
       const hasWebSite =
@@ -1728,8 +1731,8 @@ if (evidence.headings.empty > 0) {
           ? "Business/entity schema detected"
           : "Business/entity schema not detected",
         hasOrganization
-          ? "Organization or LocalBusiness structured data is present."
-          : "No Organization or LocalBusiness schema type was observed."
+           ? "Organization-related structured data is present."
+  : "No recognized organization-related schema type was observed."
       );
 
       addFinding(
