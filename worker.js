@@ -620,6 +620,38 @@ rewriter = rewriter.on(
         );
       }
 
+/*
+ * TWITTER / X CARD METADATA
+ */
+
+const twitterComplete =
+  evidence.twitter.card.length > 0 &&
+  evidence.twitter.title.length > 0 &&
+  evidence.twitter.description.length > 0 &&
+  evidence.twitter.image.length > 0;
+
+addFinding(
+  findings,
+  "discovery_signals",
+  "twitter_card",
+  twitterComplete
+    ? "pass"
+    : "warning",
+  twitterComplete
+    ? "Twitter/X card metadata detected"
+    : "Twitter/X card metadata is incomplete",
+  {
+    card:
+      evidence.twitter.card[0] || null,
+    title:
+      evidence.twitter.title[0] || null,
+    description:
+      evidence.twitter.description[0] || null,
+    image:
+      evidence.twitter.image[0] || null
+  }
+);
+      
       /*
        * TWITTER / X CARD TAGS
        */
