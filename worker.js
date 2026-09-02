@@ -2175,6 +2175,57 @@ function calculateVisibilityHealth(evidence, findings) {
   }
 
   score.dimensions.searchPageClarity.score = searchClarityScore;  
+
+  /*
+   * --------------------------------------------------
+   * 3. BUSINESS & ENTITY UNDERSTANDING — 20 POINTS
+   * --------------------------------------------------
+   */
+
+  let entityUnderstandingScore = 0;
+
+  const schemaTypes = evidence.structuredData?.types || [];
+  const normalizedSchemaTypes = schemaTypes.map(type =>
+    String(type).toLowerCase()
+  );
+
+  // Organization/entity identification — 9 points
+  const hasOrganizationEntity =
+    normalizedSchemaTypes.includes("organization") ||
+    normalizedSchemaTypes.includes("localbusiness") ||
+    normalizedSchemaTypes.includes("newsmediaorganization");
+
+  if (hasOrganizationEntity) {
+    entityUnderstandingScore += 9;
+  }
+
+  // Website identity — 6 points
+  const hasWebsiteSchema =
+    normalizedSchemaTypes.includes("website");
+
+  if (hasWebsiteSchema) {
+    entityUnderstandingScore += 6;
+  }
+
+  // Structured-data presence & validity — 5 points
+  const jsonLdCount =
+    evidence.structuredData?.jsonLdCount || 0;
+
+  const jsonLdParseErrors =
+    evidence.structuredData?.parseErrors || 0;
+
+  if (jsonLdCount > 0) {
+    if (jsonLdParseErrors === 0) {
+      entityUnderstandingScore += 5;
+    } else if (jsonLdParseErrors < jsonLdCount) {
+      entityUnderstandingScore += 3;
+    } else {
+      entityUnderstandingScore += 1;
+    }
+  }
+
+  score.dimensions.businessEntityUnderstanding.score =
+    entityUnderstandingScore;  
   return score;
 }
 
