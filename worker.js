@@ -1751,22 +1751,22 @@ if (evidence.headings.empty > 0) {
         ogComplete
           ? "pass"
           : "warning",
-        ogComplete
-          ? "Core Open Graph metadata detected"
-          : "Open Graph metadata is incomplete",
-        {
-          title:
-            evidence.openGraph.title[0] ||
-            null,
-          description:
-            evidence.openGraph
-              .description[0] || null,
-          image:
-            evidence.openGraph.image[0] ||
-            null
-        }
-      );
-
+         ogComplete
+    ? "Core Open Graph metadata detected"
+    : "Open Graph metadata is incomplete",
+  ogComplete
+    ? "Core Open Graph title, description, and image metadata were detected."
+    : "One or more core Open Graph fields are missing.",
+  {
+    title:
+      evidence.openGraph.title[0] || null,
+    description:
+      evidence.openGraph.description[0] || null,
+    image:
+      evidence.openGraph.image[0] || null
+  }
+);
+      
 /*
  * TWITTER / X CARD METADATA
  */
@@ -1784,19 +1784,22 @@ addFinding(
   twitterComplete
     ? "pass"
     : "warning",
-  twitterComplete
-    ? "Twitter/X card metadata detected"
-    : "Twitter/X card metadata is incomplete",
-  {
-    card:
-      evidence.twitter.card[0] || null,
-    title:
-      evidence.twitter.title[0] || null,
-    description:
-      evidence.twitter.description[0] || null,
-    image:
-      evidence.twitter.image[0] || null
-  }
+twitterComplete
+  ? "Twitter/X card metadata detected"
+  : "Twitter/X card metadata is incomplete",
+twitterComplete
+  ? "Core Twitter/X card, title, description, and image metadata were detected."
+  : "One or more core Twitter/X metadata fields are missing.",
+{
+  card:
+    evidence.twitter.card[0] || null,
+  title:
+    evidence.twitter.title[0] || null,
+  description:
+    evidence.twitter.description[0] || null,
+  image:
+    evidence.twitter.image[0] || null
+}
 );
       
       /*
