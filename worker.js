@@ -2283,6 +2283,80 @@ if (jsonLdCount > 0) {
 
   score.dimensions.discoverySharingSignals.score =
     Math.round(discoverySharingScore * 10) / 10;  
+
+    /*
+   * --------------------------------------------------
+   * 5. CONTENT & EXPERIENCE QUALITY — 10 POINTS
+   * --------------------------------------------------
+   */
+
+  let contentExperienceScore = 0;
+
+  // Heading structure & hierarchy — 6 points
+  const headingSequence = evidence.headings?.sequence || [];
+
+  let skippedHeadingLevels = 0;
+
+  for (let i = 1; i < headingSequence.length; i++) {
+    const previousLevel = headingSequence[i - 1].level;
+    const currentLevel = headingSequence[i].level;
+
+    if (currentLevel > previousLevel + 1) {
+      skippedHeadingLevels += 1;
+    }
+  }
+
+  if (headingSequence.length >= 2) {
+    if (skippedHeadingLevels === 0) {
+      contentExperienceScore += 6;
+    } else if (skippedHeadingLevels === 1) {
+      contentExperienceScore += 4;
+    } else {
+      contentExperienceScore += 2;
+    }
+  }
+
+  // Empty headings — 2 points
+  const emptyHeadings = evidence.headings?.empty || 0;
+
+  if (emptyHeadings === 0) {
+    contentExperienceScore += 2;
+  } else if (emptyHeadings === 1) {
+    contentExperienceScore += 1;
+  }
+
+  // Duplicate heading text — 2 points
+  const allHeadingText = [
+    ...(evidence.headings?.h1 || []),
+    ...(evidence.headings?.h2 || []),
+    ...(evidence.headings?.h3 || []),
+    ...(evidence.headings?.h4 || []),
+    ...(evidence.headings?.h5 || []),
+    ...(evidence.headings?.h6 || [])
+  ]
+    .map(value => String(value).trim().toLowerCase())
+    .filter(Boolean);
+
+  const headingCounts = {};
+
+  for (const heading of allHeadingText) {
+    headingCounts[heading] = (headingCounts[heading] || 0) + 1;
+  }
+
+  const duplicateHeadingInstances = Object.values(headingCounts)
+    .filter(count => count > 1)
+    .reduce((total, count) => total + (count - 1), 0);
+
+  if (duplicateHeadingInstances === 0) {
+    contentExperienceScore += 2;
+  } else if (duplicateHeadingInstances === 1) {
+    contentExperienceScore += 1.5;
+  } else if (duplicateHeadingInstances <= 4) {
+    contentExperienceScore += 1;
+  }
+
+  score.dimensions.contentExperienceQuality.score =
+    contentExperienceScore;  
   return score;
 }
 
