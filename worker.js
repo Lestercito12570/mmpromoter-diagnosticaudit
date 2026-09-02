@@ -1963,6 +1963,123 @@ engineVersion: "1.0.1-canonical",
 
 
 /*
+ * --------------------------------------------------
+ * WEBSITE VISIBILITY HEALTH SCORING
+ * --------------------------------------------------
+ */
+
+function calculateVisibilityHealth(evidence, findings) {
+  const score = {
+    version: "1.0",
+
+    dimensions: {
+      technicalAccessibility: {
+        score: 0,
+        max: 25
+      },
+
+      searchPageClarity: {
+        score: 0,
+        max: 25
+      },
+
+      businessEntityUnderstanding: {
+        score: 0,
+        max: 20
+      },
+
+      discoverySharingSignals: {
+        score: 0,
+        max: 20
+      },
+
+      contentExperienceQuality: {
+        score: 0,
+        max: 10
+      }
+    },
+
+    overall: {
+      score: 0,
+      max: 100
+    },
+
+    constraints: []
+  };
+
+  /*
+   * --------------------------------------------------
+   * 1. TECHNICAL ACCESSIBILITY — 25 POINTS
+   * --------------------------------------------------
+   */
+
+  let technicalScore = 0;
+
+  // Page accessibility & connection health — 10 points
+  if (evidence.httpStatus >= 200 && evidence.httpStatus < 400) {
+    technicalScore += 10;
+  }
+
+  // Search indexability — 6 points
+  const hasNoIndex =
+    (evidence.html?.robotsDirectives || []).some(value =>
+      String(value).toLowerCase().includes("noindex")
+    ) ||
+    String(evidence.xRobotsTag || "").toLowerCase().includes("noindex");
+
+  if (!hasNoIndex) {
+    technicalScore += 6;
+  } else {
+    score.constraints.push({
+      code: "noindex",
+      message: "The page explicitly prevents search indexing."
+    });
+  }
+
+  // robots.txt accessibility — 3 points
+  if (evidence.robotsTxt?.accessible) {
+    technicalScore += 3;
+  }
+
+  // Sitemap discovery — 3 points
+  if (
+    (evidence.sitemap?.declaredInRobots || []).length > 0 ||
+    evidence.sitemap?.accessible
+  ) {
+    technicalScore += 3;
+  }
+
+  // Mobile viewport support — 2 points
+  if (evidence.html?.viewport) {
+    technicalScore += 2;
+  }
+
+  // Server response — 1 point
+  // v1.0 awards this point when the page was successfully retrieved.
+  if (evidence.httpStatus >= 200 && evidence.httpStatus < 400) {
+    technicalScore += 1;
+  }
+
+  score.dimensions.technicalAccessibility.score = technicalScore;
+
+  return score;
+}
+
+/*
+ * Existing helper functions
+ */
+
+function addFinding(
+  findings,
+  category,
+  code,
+  status,
+  title,
+  description,
+  evidence = null
+) {
+
+/*
  * ========================================================
  * HELPERS
  * ========================================================
@@ -1981,7 +2098,6 @@ function jsonResponse(
     }
   );
 }
-
 
 function addFinding(
   findings,
