@@ -2385,6 +2385,13 @@ if (jsonLdCount > 0) {
  * Existing helper functions
  */
 
+
+/*
+ * ========================================================
+ * HELPERS
+ * ========================================================
+ */
+
 function addFinding(
   findings,
   category,
@@ -2394,12 +2401,15 @@ function addFinding(
   description,
   evidence = null
 ) {
-
-/*
- * ========================================================
- * HELPERS
- * ========================================================
- */
+  findings.push({
+    category,
+    code,
+    status,
+    title,
+    description,
+    evidence
+  });
+}
 
 function jsonResponse(
   data,
