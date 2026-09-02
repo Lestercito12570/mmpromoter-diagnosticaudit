@@ -2426,6 +2426,32 @@ const currentLevel =
     score.interpretation.summary =
       "This website is missing several foundational signals that support reliable discovery and understanding. Addressing the most important gaps should be the first priority.";
   }
+
+ /*
+   * --------------------------------------------------
+   * PRIORITY ACTIONS
+   * --------------------------------------------------
+   */
+
+  if (
+    score.dimensions.businessEntityUnderstanding.score < 10
+  ) {
+    score.interpretation.priorities.push({
+      priority: 1,
+      area: "Business & Entity Understanding",
+      title: "Establish a clear machine-readable business identity",
+      whatThisMeans:
+        "The website does not currently provide strong structured signals identifying the business and the website it represents.",
+      recommendedAction:
+        "Add appropriate Organization-related and WebSite structured data so search and AI systems have a clearer machine-readable identity to work from.",
+      scoreImpact: {
+        current:
+          score.dimensions.businessEntityUnderstanding.score,
+        max:
+          score.dimensions.businessEntityUnderstanding.max
+      }
+    });
+  }
   
   return score;
 }
