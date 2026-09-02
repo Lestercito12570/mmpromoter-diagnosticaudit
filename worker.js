@@ -271,6 +271,7 @@ sitemap: sitemapEvidence,
           favicon: "",
           hreflang: [],
           titleCount: 0,
+          titles: [],
           title: "",
           titleLength: 0,
 
@@ -391,31 +392,34 @@ sitemap: sitemapEvidence,
       });
 
       /*
-       * TITLE
-       */
+ * TITLE
+ */
 
-      rewriter = rewriter.on("title", {
-        element() {
-          evidence.html.titleCount += 1;
-          currentTitle = "";
-        },
+rewriter = rewriter.on("title", {
+  element() {
+    evidence.html.titleCount += 1;
+    currentTitle = "";
+  },
 
-        text(text) {
-          currentTitle += text.text;
+  text(text) {
+    currentTitle += text.text;
 
-          if (text.lastInTextNode) {
-            const value =
-              normalizeWhitespace(currentTitle);
+    if (text.lastInTextNode) {
+      const value =
+        normalizeWhitespace(currentTitle);
 
-            if (!evidence.html.title && value) {
-              evidence.html.title = value;
-              evidence.html.titleLength =
-                value.length;
-            }
-          }
-        }
-      });
+      if (value) {
+        evidence.html.titles.push(value);
+      }
 
+      if (!evidence.html.title && value) {
+        evidence.html.title = value;
+        evidence.html.titleLength =
+          value.length;
+      }
+    }
+  }
+});
       /*
        * META DESCRIPTION
        */
