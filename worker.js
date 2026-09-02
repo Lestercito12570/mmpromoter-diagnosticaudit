@@ -77,6 +77,8 @@ export default {
        * --------------------------------------------------
        */
 
+      const fetchStartedAt = Date.now();
+      
       const response = await fetch(target.toString(), {
         method: "GET",
         redirect: "follow",
@@ -250,6 +252,7 @@ try {
         httpStatus: response.status,
         contentType,
         xRobotsTag,
+        responseTimeMs,
         declaredContentLength:
           contentLength
             ? Number(contentLength)
