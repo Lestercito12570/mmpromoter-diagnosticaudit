@@ -2392,25 +2392,6 @@ if (jsonLdCount > 0) {
  * ========================================================
  */
 
-function addFinding(
-  findings,
-  category,
-  code,
-  status,
-  title,
-  description,
-  evidence = null
-) {
-  findings.push({
-    category,
-    code,
-    status,
-    title,
-    description,
-    evidence
-  });
-}
-
 function jsonResponse(
   data,
   status,
