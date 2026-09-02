@@ -2302,9 +2302,12 @@ if (jsonLdCount > 0) {
   let skippedHeadingLevels = 0;
 
   for (let i = 1; i < headingSequence.length; i++) {
-    const previousLevel = headingSequence[i - 1].level;
-    const currentLevel = headingSequence[i].level;
+   const previousLevel =
+  parseInt(String(headingSequence[i - 1].level).replace("h", ""), 10);
 
+const currentLevel =
+  parseInt(String(headingSequence[i].level).replace("h", ""), 10);
+    
     if (currentLevel > previousLevel + 1) {
       skippedHeadingLevels += 1;
     }
