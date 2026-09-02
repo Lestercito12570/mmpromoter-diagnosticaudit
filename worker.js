@@ -2242,7 +2242,7 @@ if (jsonLdCount > 0) {
   
   /*
    * --------------------------------------------------
-   * 4. DISCOVERY & SHARING SIGNALS — 20 POINTS
+   * 4.  — 20 POINTS
    * --------------------------------------------------
    */
 
@@ -2475,6 +2475,16 @@ area: "Discovery & Sharing Signals",
       }
     });
   }
+
+  score.interpretation.priorities.sort(
+    (a, b) => b.impact - a.impact
+  );
+
+  score.interpretation.priorities.forEach(
+    (item, index) => {
+      item.priority = index + 1;
+    }
+  );
   
   return score;
 }
