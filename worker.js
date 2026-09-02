@@ -2452,6 +2452,26 @@ const currentLevel =
       }
     });
   }
+
+  if (
+    score.dimensions.discoverySharingSignals.score < 10
+  ) {
+    score.interpretation.priorities.push({
+      priority: 2,
+      area: "Discovery & Sharing Signals",
+      title: "Improve how the website appears when discovered or shared",
+      whatThisMeans:
+        "The website is missing or has incomplete metadata that helps digital platforms understand how its pages should be represented when discovered or shared.",
+      recommendedAction:
+        "Add complete Open Graph and Twitter/X metadata, including page title, description, and image signals, to strengthen how the website is represented across social and discovery surfaces.",
+      scoreImpact: {
+        current:
+          score.dimensions.discoverySharingSignals.score,
+        max:
+          score.dimensions.discoverySharingSignals.max
+      }
+    });
+  }
   
   return score;
 }
