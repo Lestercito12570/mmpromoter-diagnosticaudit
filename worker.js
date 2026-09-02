@@ -1938,9 +1938,8 @@ engineVersion: "1.0.1-canonical",
           },
 
           summary,
-
+visibilityHealth,
           findings,
-
           evidence
         },
         200,
