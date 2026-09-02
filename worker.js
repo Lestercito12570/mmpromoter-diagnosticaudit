@@ -2438,6 +2438,7 @@ const currentLevel =
   ) {
     score.interpretation.priorities.push({
       priority: 1,
+      impact: 20 - score.dimensions.businessEntityUnderstanding.score,
       area: "Business & Entity Understanding",
       title: "Establish a clear machine-readable business identity",
       whatThisMeans:
