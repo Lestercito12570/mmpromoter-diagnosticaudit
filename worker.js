@@ -291,7 +291,8 @@ sitemap: sitemapEvidence,
           h4: [],
           h5: [],
           h6: [],
-          sequence: []
+          sequence: [],
+          empty: 0
         },
 
         openGraph: {
@@ -587,6 +588,8 @@ rewriter = rewriter.on(
   });
                 
                 visibleTextParts.push(value);
+                } else {
+  evidence.headings.empty += 1;              
               }
             }
           }
@@ -1537,6 +1540,32 @@ if (
   );
 }
 
+/*
+ * EMPTY HEADINGS
+ */
+
+if (evidence.headings.empty > 0) {
+  addFinding(
+    findings,
+    "page_structure",
+    "empty_headings",
+    "warning",
+    "Empty headings detected",
+    `${evidence.headings.empty} empty heading element(s) were detected.`,
+    {
+      observed: evidence.headings.empty
+    }
+  );
+} else {
+  addFinding(
+    findings,
+    "page_structure",
+    "empty_headings",
+    "pass",
+    "No empty headings detected",
+    "All observed heading elements contain text."
+  );
+}      
       /*
        * MALFORMED LINKS
        */
