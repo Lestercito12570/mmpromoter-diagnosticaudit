@@ -945,6 +945,22 @@ rewriter = rewriter.on(
         }
       );
 
+/*
+ * RESPONSE TIME
+ */
+
+addFinding(
+  findings,
+  "site_health",
+  "response_time",
+  "pass",
+  "Website response time measured",
+  `The diagnostic fetch completed in ${evidence.responseTimeMs} ms.`,
+  {
+    observedMs: evidence.responseTimeMs
+  }
+);
+      
       /*
        * TITLE
        */
