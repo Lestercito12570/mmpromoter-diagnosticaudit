@@ -1331,6 +1331,7 @@ if (evidence.sitemap.accessible) {
   );
 
   if (
+      evidence.robotsTxt.accessible &&
     evidence.sitemap.declaredInRobots.length === 0
   ) {
     addFinding(
